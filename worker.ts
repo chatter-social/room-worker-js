@@ -84,14 +84,13 @@ Total Particiants: ${lkData.reduce(
 Total Listeners: ${lkData.reduce((acc, room) => acc + room.listenerCount, 0)} 
 _________________________________ 
   \n`);
-  console.log(`Time taken: ${Date.now() - startTime}ms`);
   console.log(`
 \n
-    FOUND ${dbRooms.length} rooms active in DB not on media nodes
-    `);
+FOUND ${dbRooms.length} rooms active in DB not on media nodes`);
   dbRooms.forEach((room) => {
     console.log(`Room ID: ${room.id} - ${room.title}`);
   });
+  console.log(`Time taken: ${Date.now() - startTime}ms`);
 };
 
 setInterval(main, 5000);
