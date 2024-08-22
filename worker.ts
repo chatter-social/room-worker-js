@@ -61,12 +61,16 @@ const main = async () => {
     }
   }
 
-  const dbRooms = await db.room.count({
+  const dbRooms = await db.room.findMany({
     where: {
       status: "active",
       id: {
         notIn: lkData.map((room) => room.id),
       },
+    },
+    select: {
+      id: true,
+      title: true,
     },
   });
 
@@ -78,7 +82,10 @@ Total Particiants: ${lkData.reduce(
   )}
 Total Listeners: ${lkData.reduce((acc, room) => acc + room.listenerCount, 0)} \n
 /////////////////////////////////////////////////////
-    FOUND ${dbRooms} rooms active in DB not on media nodes
+    FOUND ${dbRooms.length} rooms active in DB not on media nodes
+    ${dbRooms.forEach((room) => {
+      console.log(`Room ID: ${room.id} - ${room.title}`);
+    })}
 /////////////////////////////////////////////////////
 `);
 
