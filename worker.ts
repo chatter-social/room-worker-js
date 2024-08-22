@@ -75,15 +75,15 @@ const main = async () => {
   });
 
   console.log(`
+_________________________________
 Total Rooms: ${lkData.length}
 Total Particiants: ${lkData.reduce(
     (acc, room) => acc + room.participantCount,
     0
   )}
-Total Listeners: ${lkData.reduce(
-    (acc, room) => acc + room.listenerCount,
-    0
-  )} \n`);
+Total Listeners: ${lkData.reduce((acc, room) => acc + room.listenerCount, 0)} 
+_________________________________ 
+  \n`);
   console.log(`Time taken: ${Date.now() - startTime}ms`);
   console.log(`
 \n
