@@ -80,16 +80,18 @@ Total Particiants: ${lkData.reduce(
     (acc, room) => acc + room.participantCount,
     0
   )}
-Total Listeners: ${lkData.reduce((acc, room) => acc + room.listenerCount, 0)} \n
+Total Listeners: ${lkData.reduce(
+    (acc, room) => acc + room.listenerCount,
+    0
+  )} \n`);
+  console.log(`Time taken: ${Date.now() - startTime}ms`);
+  console.log(`
 /////////////////////////////////////////////////////
     FOUND ${dbRooms.length} rooms active in DB not on media nodes
-    ${dbRooms.forEach((room) => {
-      console.log(`Room ID: ${room.id} - ${room.title}`);
-    })}
-/////////////////////////////////////////////////////
-`);
-
-  console.log(`Time taken: ${Date.now() - startTime}ms`);
+    `);
+  dbRooms.forEach((room) => {
+    console.log(`Room ID: ${room.id} - ${room.title}`);
+  });
 };
 
 setInterval(main, 5000);
