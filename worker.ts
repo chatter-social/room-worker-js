@@ -86,7 +86,7 @@ Total Listeners: ${lkData.reduce(
   )} \n`);
   console.log(`Time taken: ${Date.now() - startTime}ms`);
   console.log(`
-/////////////////////////////////////////////////////
+\n
     FOUND ${dbRooms.length} rooms active in DB not on media nodes
     `);
   dbRooms.forEach((room) => {
