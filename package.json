@@ -1,0 +1,19 @@
+{
+  "name": "room-worker-js",
+  "module": "worker.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prisma": "^5.18.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@prisma/client": "5.18.0",
+    "axios": "^1.7.4",
+    "dotenv": "^16.4.5",
+    "livekit-server-sdk": "^2.6.1",
+    "prisma-client": "^0.0.0"
+  }
+}

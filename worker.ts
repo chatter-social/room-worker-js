@@ -1,0 +1,81 @@
+import { db } from "./middleware/db.js";
+import { lkClient } from "./livekit.js";
+import axios from "axios";
+import "dotenv/config";
+
+const { EMQX_USERNAME, EMQX_PASSWORD } = process.env;
+
+function isUUIDv4(str: string): boolean {
+  const uuidv4Regex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidv4Regex.test(str);
+}
+
+const lkData = (await lkClient.listRooms())
+  .filter((room) => isUUIDv4(room.name))
+  .map((room) => ({
+    id: room.name,
+    participantCount: room.numParticipants,
+    listenerCount: 0,
+  }))
+  .sort((a, b) => b.participantCount - a.participantCount);
+
+console.log(`FETCHED ${lkData.length} ROOMS from LK Server`);
+
+// Fetch Listener Count
+for (const room of lkData) {
+  try {
+    const response = await axios.get(
+      `http://ws-dev-002.chattersocial.io:18083/api/v5/subscriptions?topic=room/${room.id}/listener&limit=1`,
+      {
+        auth: {
+          username: EMQX_USERNAME || "",
+          password: EMQX_PASSWORD || "",
+        },
+      }
+    );
+    room.listenerCount = response.data.meta.count;
+  } catch {
+    console.log("Error fetching listeners for room: " + room.id);
+  }
+}
+
+for (const room of lkData) {
+  console.log(
+    `Updating room: ${room.id} in DB - ${room.participantCount} participants, ${room.listenerCount} listeners`
+  );
+  try {
+    await db.room.update({
+      where: {
+        id: room.id,
+      },
+      data: {
+        participant_count: room.participantCount,
+        listener_count: room.listenerCount,
+      },
+    });
+  } catch {
+    console.log("Error updating room: " + room.id);
+  }
+}
+
+const dbRooms = await db.room.count({
+  where: {
+    status: "active",
+    id: {
+      notIn: lkData.map((room) => room.id),
+    },
+  },
+});
+
+console.log(`
+Total Rooms: ${lkData.length}
+Total Particiants: ${lkData.reduce(
+  (acc, room) => acc + room.participantCount,
+  0
+)}
+Total Listeners: ${lkData.reduce((acc, room) => acc + room.listenerCount, 0)} \n
+/////////////////////////////////////////////////////
+    FOUND ${dbRooms} rooms active in DB not on media nodes
+/////////////////////////////////////////////////////
+`);
