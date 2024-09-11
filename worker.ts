@@ -28,7 +28,7 @@ const main = async () => {
   for (const room of lkData) {
     try {
       const response = await axios.get(
-        `${EMQX_HOST}:${EMQX_PORT}/api/v5/subscriptions?topic=room/${room.id}/listener&limit=1`,
+        `http://${EMQX_HOST}:${EMQX_PORT}/api/v5/subscriptions?topic=room/${room.id}/listener&limit=1`,
         {
           auth: {
             username: EMQX_USERNAME || "",
