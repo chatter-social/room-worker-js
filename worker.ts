@@ -3,7 +3,7 @@ import { lkClient } from "./livekit.js";
 import axios from "axios";
 import "dotenv/config";
 
-const { EMQX_USERNAME, EMQX_PASSWORD } = process.env;
+const { EMQX_USERNAME, EMQX_PASSWORD, EMQX_HOST, EMQX_PORT } = process.env;
 
 function isUUIDv4(str: string): boolean {
   const uuidv4Regex =
@@ -28,7 +28,7 @@ const main = async () => {
   for (const room of lkData) {
     try {
       const response = await axios.get(
-        `http://ws-dev-002.chattersocial.io:18083/api/v5/subscriptions?topic=room/${room.id}/listener&limit=1`,
+        `${EMQX_HOST}:${EMQX_PORT}/api/v5/subscriptions?topic=room/${room.id}/listener&limit=1`,
         {
           auth: {
             username: EMQX_USERNAME || "",
